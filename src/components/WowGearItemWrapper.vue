@@ -32,13 +32,14 @@ import { ref, computed } from 'vue'
 import WowGearItem from './WowGearItem.vue'
 import { Item } from '../types/item-types'
 import items from '../data/item-sample'
+import { defineEmits } from 'vue';
 
 interface Props {
   item: Item
-  onItemSelect?: (newItem: Item) => void
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits(['itemSelect'])
 
 const showDropdown = ref(false)
 
@@ -59,9 +60,7 @@ const handleClick = () => {
 
 // Handle selection of an alternative item
 const selectItem = (newItem: Item) => {
-  if (props.onItemSelect) {
-    props.onItemSelect(newItem)
-  }
+  emit('itemSelect', newItem)
   showDropdown.value = false
 }
 

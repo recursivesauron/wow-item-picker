@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import WowGearItemWrapper from './components/WowGearItemWrapper.vue'
 import StatTotal from './components/StatTotal.vue'
-import { Item, MainHand, Clothing } from './types/item-types'
-import items from './data/item-sample';
-import { ref, computed } from 'vue';
+import { Item } from './types/item-types'
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 
-const equippedItems = ref([
-    items.filter((item) => item.category == 'Head')[0],
-    items.filter((item) => item.category == 'Chest')[0],
-    items.filter((item) => item.category == 'Legs')[0],
-    items.filter((item) => item.category == 'MainHand')[0]
-] as Item[])
+const store = useStore();
+
+const equippedItems = computed(() => store.state.equippedItems);
 
 // Function to handle item selection from dropdown
 const handleItemSelect = (index: number, newItem: Item) => {
-  equippedItems.value[index] = newItem
+  store.commit('setEquippedItem', { index, newItem });
 }
 
 const staminaTotal = computed(() => equippedItems.value.reduce((sum, item) => sum + (item.stamina || 0), 0));
@@ -51,7 +48,7 @@ const masteryTotal = computed(() => equippedItems.value.reduce((sum, item) => {
       v-for="(item, index) in equippedItems" 
       :key="item.itemId" 
       :item="item" 
-      :onItemSelect="(newItem) => handleItemSelect(index, newItem)" 
+      @itemSelect="(newItem) => handleItemSelect(index, newItem)" 
     />
     <div class="stat-total-container">
       <StatTotal 
@@ -100,9 +97,12 @@ const masteryTotal = computed(() => equippedItems.value.reduce((sum, item) => {
   padding: 0 !important;
   margin: 0 !important;
   min-height: 100vh;
+  height: 100vh;
   width: 100vw;
+  max-width: 100vw;
   background: url('@/assets/Momo.jpg') no-repeat center center fixed;
   background-size: cover;
+  overflow-x: hidden;
 }
 
 .app-bg {
@@ -112,6 +112,9 @@ const masteryTotal = computed(() => equippedItems.value.reduce((sum, item) => {
   padding: 20px;
   gap: 20px;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .filter-green{
@@ -140,7 +143,7 @@ const masteryTotal = computed(() => equippedItems.value.reduce((sum, item) => {
   bottom: 0px;
   left: 0px;
   background-color: rgba(0, 0, 0, 0.5);
-  width: 1000px;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
