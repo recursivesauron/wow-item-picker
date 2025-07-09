@@ -39,6 +39,7 @@ const props = defineProps<{
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  padding-right: 40px;
 }
 .stat-total-number {
   font-size: 1.2rem;
